@@ -1,0 +1,25 @@
+{
+  "name": "hexo-cache",
+  "version": "0.0.1",
+  "main": "index",
+  "keywords": [
+    "node",
+    "hexo-cache",
+    "hexo",
+    "cache"
+  ],
+  "author": "xinzai <1843605478@qq.com>",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "hexo-fs": "^0.2.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neuqzxy/hexo-cache.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neuqzxy/hexo-cache.git"
+  },
+  "homepage": "https://github.com/neuqzxy/hexo-cache.git"
+}
