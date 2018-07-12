@@ -1,6 +1,6 @@
 {
   "name": "hexo-cache",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "main": "index",
   "keywords": [
     "node",
@@ -12,7 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "ejs": "^2.6.1",
-    "hexo-fs": "^0.2.3"
+    "hexo-fs": "^0.2.3",
+    "uuid": "^3.3.2"
   },
   "repository": {
     "type": "git",

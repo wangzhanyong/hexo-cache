@@ -12,8 +12,26 @@ this.addEventListener('install', function (event) {
     );
 });
 
-this.addEventListener('activate', function () {
-    console.log('Activated');
+this.addEventListener('activate', function (event) {
+    console.log('清理旧版本')
+    event.waitUntil(
+        Promise.all([
+
+            // 更新客户端
+            self.clients.claim(),
+            // 清理旧版本
+            caches.keys().then(function (cacheList) {
+                console.log(cacheList)
+                return Promise.all(
+                    cacheList.map(function (cacheName) {
+                        if (cacheName !== 'hexo-cache-v<%=version%>') {
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
+            })
+        ])
+    );
 });
 
 this.addEventListener('fetch', function (event) {

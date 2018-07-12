@@ -2,9 +2,10 @@ const hexoFs = require('hexo-fs');
 const fs = require('fs');
 const path = require('path');
 const ejs = require('ejs');
-const version = require('../../package.json').version;
+const uuidv1 = require('uuid/v1');
+const version = uuidv1();
 
-hexo.on('generateAfter', () => {
+hexo.on('exit', () => {
     const distPath = path.join(__dirname, '../../public/');
     try {
         let files = hexoFs.listDirSync(distPath, {ignoreHidden: true});
