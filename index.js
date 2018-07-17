@@ -7,7 +7,8 @@ const version = uuidv1()
 
 const distPath = path.join(__dirname, '../../public/')
 
-hexo.on('exit', () => {
+hexo.on('exit', (evt) => {
+  console.log(evt)
   let data = {
     version
   }
