@@ -1,0 +1,50 @@
+const cacheList = <%- cacheList %>
+const cacheKey = 'hexo-cache-v<%=version%>'
+
+self.addEventListener('install', function (event) {
+  event.waitUntil(
+    caches.open(cacheKey)
+      .then(function (cache) {
+        return cache.addAll(cacheList)
+      })
+      .then(() => {
+        self.skipWaiting()
+      })
+  )
+})
+
+self.addEventListener('activate', function (event) {
+  event.waitUntil(
+    caches.keys().then(function (keys) {
+      Promise.all(keys.map(function (key) {
+        if (key !== cacheKey) {
+          return caches.delete(key)
+        }
+      }))
+        .then(() => {
+          self.clients.claim()
+        })
+    })
+  )
+})
+
+self.addEventListener('fetch', function (event) {
+  event.respondWith(
+    caches.match(event.request).then(function (response) {
+      if (response) {
+        return response
+      }
+      var request = event.request.clone() // 把原始请求拷过来
+      return fetch(request).then(function (httpRes) {
+        if (!httpRes || httpRes.status !== 200) {
+          return httpRes
+        }
+        var responseClone = httpRes.clone()
+        caches.open(cacheKey).then(function (cache) {
+          cache.put(event.request, responseClone)
+        })
+        return httpRes
+      })
+    })
+  )
+})
