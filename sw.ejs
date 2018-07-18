@@ -8,10 +8,10 @@ const matchOptions = {
   ignoreMethod: true,
   ignoreVary: true
 }
-self.addEventListener('install', function (event) {
+self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(cacheKey)
-      .then(function (cache) {
+      .then(cache => {
         return cache.addAll(cacheList)
       })
       .then(() => {
@@ -20,10 +20,10 @@ self.addEventListener('install', function (event) {
   )
 })
 
-self.addEventListener('activate', function (event) {
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(function (keys) {
-      Promise.all(keys.map(function (key) {
+    caches.keys().then(keys => {
+      Promise.all(keys.map(key => {
         if (key !== cacheKey) {
           return caches.delete(key)
         }
@@ -38,12 +38,15 @@ self.addEventListener('activate', function (event) {
 const isIgnore = (request) => {
   if (request.method !== 'GET') return true
   ignoreRequestKeywords.some(keyword => {
-    if (request.url.includes(keyword)) return true
+    if (request.url.includes(keyword)) {
+      console.log('Ignored: ', keyword)
+      return true
+    }
   })
   return false
 }
 
-self.addEventListener('fetch', function (event) {
+self.addEventListener('fetch', event => {
   if (isIgnore(event.request)) return fetch(event.request)
   event.respondWith(
     caches.match(event.request, matchOptions)
@@ -51,6 +54,7 @@ self.addEventListener('fetch', function (event) {
         if (response) {
           return response
         }
+        console.log('Cache missed: ', event.request.url)
         throw Error('go catch')
       })
       .catch(() => {
@@ -59,10 +63,13 @@ self.addEventListener('fetch', function (event) {
             return response
           }
           const responseClone = response.clone()
-          caches.open(cacheKey).then(function (cache) {
+          caches.open(cacheKey)
+          .then(cache => {
             cache.put(event.request.url, responseClone)
           })
-          return response
+          .then(() => {
+            return response
+          })
         })
       })
   )
