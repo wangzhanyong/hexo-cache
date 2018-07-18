@@ -36,40 +36,39 @@ self.addEventListener('activate', event => {
 })
 
 const isIgnore = (request) => {
-  if (request.method !== 'GET') return true
-  ignoreRequestKeywords.some(keyword => {
+  let isInclude = ignoreRequestKeywords.some(keyword => {
     if (request.url.includes(keyword)) {
-      console.log('Ignored: ', keyword)
       return true
     }
   })
-  return false
+  return isInclude ? true : false
 }
 
 self.addEventListener('fetch', event => {
-  if (isIgnore(event.request)) return fetch(event.request)
+  if (isIgnore(event.request)) return
   event.respondWith(
     caches.match(event.request, matchOptions)
-      .then(function (response) {
-        if (response) {
-          return response
-        }
-        console.log('Cache missed: ', event.request.url)
-        throw Error('go catch')
-      })
-      .catch(() => {
-        return fetch(event.request).then(response=>{
-          if (!response.ok) {
+    .then(response => {
+      if (response) {
+        return response
+      }
+      console.log('Cache missed: ', event.request.url)
+      throw Error('go catch')
+    })
+    .catch(err => {
+        const requestClone = event.request.clone()
+        return fetch(requestClone).then(response => {
+          if (!response && response.status !== 200) {
             return response
           }
+          const responseClone = response.clone()
           caches.open(cacheKey)
-          .then(cache => {
-            cache.put(event.request.url, response).then(result => {
-              console.log('put: ', result)
+            .then(cache => {
+              cache.put(event.request, response)
             })
-          })
-          return response.clone()
+          return responseClone
         })
       })
   )
 })
+
