@@ -31,6 +31,7 @@ hexo.on('exit', () => {
       console.log(err)
     } else {
       hexoFs.writeFileSync(path.join(distPath, './sw.js'), str)
+      console.log('sw.js 文件已生成')
     }
   })
 })

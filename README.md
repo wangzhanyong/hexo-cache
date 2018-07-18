@@ -34,5 +34,7 @@ hexoCache:
     - baidu
   version: 2018-07-18T13:00
 
+（还有一堆毛病，凑合玩吧 ^_^）
+
 
 4. 执行 `hexo g` 即可添加service worker缓存支持
