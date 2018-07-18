@@ -20,7 +20,7 @@ hexo.on('exit', () => {
     data.version = moment().format('YYYYMMDDHHmm')
   }
   try {
-    let files = hexoFs.listDirSync(distPath, { ignoreHidden: true })
+    let files = hexoFs.listDirSync(distPath, { ignoreHidden: true }).filter(url=>url!=='CNAME')
     data.cacheList = JSON.stringify(files)
   } catch (err) {
     console.error(err.message)
