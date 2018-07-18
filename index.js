@@ -24,7 +24,6 @@ hexo.on('exit', () => {
        if (url==='CNAME' || url === 'sw.js') return false
        return true
     })
-    console.log(files)
     data.cacheList = JSON.stringify(files)
   } catch (err) {
     console.error(err.message)
