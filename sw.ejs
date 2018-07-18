@@ -67,9 +67,7 @@ self.addEventListener('fetch', event => {
           .then(cache => {
             cache.put(event.request.url, responseClone)
           })
-          .then(() => {
-            return response
-          })
+          return response
         })
       })
   )
