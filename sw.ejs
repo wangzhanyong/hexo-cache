@@ -1,7 +1,7 @@
 const cacheList = <%- cacheList %>
 const cacheKey = 'hexo-cache-v<%=version%>'
-<% if (ignoreRequestKeywords) { %>
-const ignoreRequestKeywords = <%- ignoreRequestKeywords %>
+  <% if (ignoreRequestKeywords) { %>
+const ignoreRequestKeywords = <% - ignoreRequestKeywords %>
 <% } %>
 const matchOptions = {
   ignoreSearch: true,
@@ -53,17 +53,16 @@ self.addEventListener('fetch', function (event) {
         }
         throw Error('go catch')
       })
-      .catch(()=> {
-        var requestClone = event.request.clone() // 把原始请求拷过来
-        return fetch(requestClone).then(function (httpRes) {
-          if (httpRes.status !== 200) {
-            return httpRes
+      .catch(() => {
+        return fetch(event.request).then(response=>{
+          if (!response.ok) {
+            return response
           }
-          var responseClone = httpRes.clone()
+          const responseClone = response.clone()
           caches.open(cacheKey).then(function (cache) {
-            cache.put(event.request, responseClone)
+            cache.put(event.request.url, responseClone)
           })
-          return httpRes
+          return response
         })
       })
   )
