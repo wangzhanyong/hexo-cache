@@ -1,6 +1,8 @@
 const cacheList = <%- cacheList %>
 const cacheKey = 'hexo-cache-v<%=version%>'
-
+<% if (ignoreRequestKeywords) { %>
+const ignoreRequestKeywords = <%- ignoreRequestKeywords %>
+<% } %>
 self.addEventListener('install', function (event) {
   event.waitUntil(
     caches.open(cacheKey)
@@ -28,23 +30,41 @@ self.addEventListener('activate', function (event) {
   )
 })
 
+const isIgnore = (request) => {
+  if (request.method !== 'GET') return true
+  ignoreRequestKeywords.some(keyword => {
+    if (request.url.includes(keyword)) return true
+  })
+  return false
+}
+
+const isInclude = (request) => {
+  cacheList.some(url => {
+    if (url === request.url) return true
+  })
+  return false
+}
+
 self.addEventListener('fetch', function (event) {
+  if (isIgnore(event.request)) return fetch(event.request)
+  if (!isInclude(event.request)) return fetch(event.request)
   event.respondWith(
-    caches.match(event.request).then(function (response) {
-      if (response) {
-        return response
-      }
-      var request = event.request.clone() // 把原始请求拷过来
-      return fetch(request).then(function (httpRes) {
-        if (!httpRes || httpRes.status !== 200) {
-          return httpRes
+    caches.match(event.request)
+      .then(function (response) {
+        if (response) {
+          return response
         }
-        var responseClone = httpRes.clone()
-        caches.open(cacheKey).then(function (cache) {
-          cache.put(event.request, responseClone)
+        var request = event.request.clone() // 把原始请求拷过来
+        return fetch(request).then(function (httpRes) {
+          if (!httpRes || httpRes.status !== 200) {
+            return httpRes
+          }
+          var responseClone = httpRes.clone()
+          caches.open(cacheKey).then(function (cache) {
+            cache.put(event.request, responseClone)
+          })
+          return httpRes
         })
-        return httpRes
       })
-    })
   )
 })

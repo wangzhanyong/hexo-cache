@@ -26,5 +26,13 @@ layout文件夹 -> _layout.swig文件
   }
 </script>
 ```
+3. 增加_config.yml配置项
 
-3. 执行 `hexo g` 即可添加service worker缓存支持
+hexoCache:
+  ignoreRequestKeywords:
+    - google
+    - baidu
+  version: 2018-07-18T13:00
+
+
+4. 执行 `hexo g` 即可添加service worker缓存支持
