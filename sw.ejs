@@ -1,7 +1,7 @@
 const cacheList = <%- cacheList %>
 const cacheKey = 'hexo-cache-v<%=version%>'
-  <% if (ignoreRequestKeywords) { %>
-const ignoreRequestKeywords = <% - ignoreRequestKeywords %>
+<% if (ignoreRequestKeywords) { %>
+const ignoreRequestKeywords = <%- ignoreRequestKeywords %>
 <% } %>
 const matchOptions = {
   ignoreSearch: true,
